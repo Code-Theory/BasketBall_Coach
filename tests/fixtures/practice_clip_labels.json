@@ -1,0 +1,11 @@
+﻿{
+  "video_sha256": "9545a19c95c27edc5900b6791b90b666ae65a83a924f8a7372dc84ef9a640634",
+  "video_duration_seconds": 34.34,
+  "description": "Four-shot practice clip; outcomes confirmed by the video owner. Times are approximate release times.",
+  "shots": [
+    {"seconds": 2.5, "outcome": "made"},
+    {"seconds": 11.6, "outcome": "missed"},
+    {"seconds": 21.3, "outcome": "made"},
+    {"seconds": 31.1, "outcome": "missed"}
+  ]
+}

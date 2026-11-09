@@ -1,0 +1,68 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111a18">
+  <title>CourtVision | Your shooting film room</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="CourtVision home"><span class="brand-mark" aria-hidden="true"><span></span></span><span>COURT<span class="brand-light">VISION</span></span></a>
+    <div class="top-right"><span class="status-dot"></span><span>YOUR FILM ROOM</span><span class="top-divider"></span><span>SHOT ANALYSIS</span></div>
+  </header>
+  <main>
+    <section class="intro" aria-labelledby="intro-title">
+      <div class="intro-copy"><div class="eyebrow"><span></span> THE DETAILS MAKE THE DIFFERENCE</div>
+        <h1 id="intro-title">Your shot.<br><em>More clearly.</em></h1>
+        <p>Turn your practice footage into a closer look at every attempt, from the first movement to the follow-through.</p>
+        <div class="intro-caption"><span class="caption-line"></span> YOUR GAME, ONE FRAME AT A TIME</div>
+      </div>
+      <div class="court-art" aria-hidden="true"><div class="court-orbit orbit-one"></div><div class="court-orbit orbit-two"></div><div class="court-ball"><span></span></div><div class="art-label"><b>THE WORK<br>BEHIND THE SHOT</b><span>01 / 03</span></div><div class="art-grid"></div></div>
+    </section>
+    <div class="section-heading"><div><span class="section-index">01 &nbsp;/&nbsp; GET STARTED</span><h2>Bring your game tape.</h2></div><span class="section-side">EVERY REP COUNTS <span>&#8599;</span></span></div>
+    <section class="workspace" id="workspace" aria-label="Upload a practice video">
+      <div class="upload-panel">
+        <div class="panel-top"><div><span class="pill"><span class="pill-dot"></span> VIDEO ANALYSIS</span><h3>Start with a clip</h3><p>A clear video of one player works best.</p></div><span class="panel-number">01</span></div>
+        <label class="dropzone" id="dropzone" for="video-file" tabindex="0">
+          <span class="upload-icon"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 16V3m-5 5 5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg></span>
+          <strong>Drop your video here</strong><span>or <u>browse files</u> from your device</span><small>MP4, MOV, M4V, AVI &nbsp; / &nbsp; UP TO 200 MB</small>
+          <input id="video-file" type="file" accept=".mp4,.mov,.m4v,.avi" hidden>
+        </label>
+        <div class="upload-foot"><span><span class="accent-arrow">&#8627;</span> &nbsp; Keep the player, ball, and hoop in view.</span><span>01 / 03</span></div>
+      </div>
+      <aside class="side-panel"><div class="side-title"><span class="side-icon">&#10035;</span> THE GAME PLAN</div>
+        <div class="step"><span>01</span><div><b>Upload your clip</b><p>Choose a clear, well-lit practice video.</p></div></div>
+        <div class="step"><span>02</span><div><b>Check the hoop</b><p>Review the rim selection before analysis.</p></div></div>
+        <div class="step"><span>03</span><div><b>Review your shots</b><p>Explore each attempt and make corrections.</p></div></div>
+        <div class="side-bottom"><span>PROGRESS IS IN<br>THE DETAILS.</span><b>CV / 01</b></div>
+      </aside>
+    </section>
+    <section class="prepare hidden" id="prepare">
+      <div class="section-heading inner"><div><span class="section-index">02 &nbsp;/&nbsp; FRAME THE ACTION</span><h2>Check the hoop.</h2><p>A good rim selection helps us follow the ball.</p></div><span class="section-side">REVIEW THE RIM <span>&#8599;</span></span></div>
+      <div class="prepare-card"><div class="preview-wrap"><canvas id="preview" aria-label="Video preview. Drag a rectangle around the rim opening." role="img"></canvas><div class="preview-caption"><span>FIRST FRAME</span><span id="video-name"></span></div></div>
+        <div class="prepare-info"><span class="pill"><span class="pill-dot"></span> HOOP CHECK</span><h3>Find the opening.</h3><p>Check that the box fits the rim opening, not the whole net. Drag on the image to adjust it.</p><div class="selection-status" id="selection-status" role="status">Finding the hoop...</div><div class="tip"><b>FILMING TIP</b><p>Keep the player, ball, and hoop visible. A steady camera makes the analysis easier to follow.</p></div><div class="button-stack"><button class="button button-primary" id="analyze" type="button">Analyze my shots <span>&#8599;</span></button><button class="button button-quiet" id="clear-hoop" type="button">Continue without hoop</button><button class="text-button" id="change-video" type="button">&#8592; &nbsp; Choose another video</button></div></div>
+      </div>
+    </section>
+    <section class="loading hidden" id="loading" aria-live="polite"><div class="loading-mark">&#10035;</div><span class="section-index">03 &nbsp;/&nbsp; ANALYSIS IN PROGRESS</span><h2>Looking at the details.</h2><p id="progress-message">Getting your clip ready...</p><div class="progress-track"><div id="progress-bar"></div></div><div class="loading-meta"><span>ANALYZING YOUR SHOTS</span><span id="progress-number">0%</span></div></section>
+    <section class="results hidden" id="results" aria-live="polite">
+      <div class="section-heading inner results-heading"><div><span class="section-index">03 &nbsp;/&nbsp; YOUR BREAKDOWN</span><h2>The film room.</h2><p>Every rep is a chance to see something new.</p></div><div class="heading-actions"><span id="save-status" class="save-status" role="status">Review saved</span><button class="button button-dark" id="start-over" type="button">Analyze another <span>&#8599;</span></button></div></div>
+      <div class="stats-grid"><article class="stat"><span>ATTEMPTS <i>01</i></span><strong id="attempts">&mdash;</strong><small>shots in your review</small></article><article class="stat"><span>MADE <i>02</i></span><strong id="made">&mdash;</strong><small>estimated or reviewed</small></article><article class="stat"><span>MISSED <i>03</i></span><strong id="missed">&mdash;</strong><small>estimated or reviewed</small></article><article class="stat highlight"><span>TO REVIEW <i>04</i></span><strong id="uncertain">&mdash;</strong><small>uncertain outcomes</small></article></div>
+      <section class="shot-review" aria-label="Shot review"><div class="card-heading"><div><span class="section-index">SHOT TIMELINE</span><h3>Review each attempt.</h3><p class="muted">Select a shot to jump to its moment. Adjust the outcome after watching.</p></div><span class="card-tag">YOUR SESSION</span></div>
+        <div class="review-layout"><div class="video-column"><video id="review-video" controls preload="metadata"></video><div class="review-actions"><button class="button button-quiet" id="add-shot" type="button"><span class="add-icon">+</span> Add shot at current time</button><span id="review-summary" class="muted"></span></div></div>
+        <div class="timeline-column"><div class="timeline-heading"><span>YOUR ATTEMPTS</span><span>SELECT TO VIEW</span></div><div id="shot-list" class="shot-list"></div></div></div>
+      </section>
+      <div class="result-grid"><div class="form-section"><div class="card-heading"><div><span class="section-index">FORM STUDY</span><h3>Three moments. One motion.</h3></div><span class="card-tag">SELECTED SHOT</span></div><p class="muted">Estimated positions for the selected attempt. Angles are measured in the image.</p><div class="stage-grid" id="stages"></div><div class="notice" id="result-note"></div></div>
+      <div class="trajectory-card"><div class="card-heading"><div><span class="section-index">BALL MOVEMENT</span><h3>Follow the flight.</h3></div><span class="card-tag">FULL CLIP</span></div><div class="trajectory-image" id="trajectory"><span>No ball path available</span></div><p class="muted">The path shows detected ball locations; gaps can affect the result.</p><div class="trace-meta"><span>VIDEO LENGTH <b id="video-duration">&mdash;</b></span><span>BALL VISIBLE <b id="ball-frames">&mdash;</b></span></div></div></div>
+      <div class="film-notes"><div><span class="section-index">FILM NOTES</span><h3>What the frames show.</h3><p>Observations for the selected shot.</p></div><ul id="film-notes"></ul><div class="coaching-guide"><b>A cue for your next rep</b><p>Start with a comfortable knee bend, then extend your legs and shooting arm through the shot. Every shot and camera angle is different; use these observations as a starting point for review.</p><a href="https://jr.nba.com/basketball-practice-plans/starter/" target="_blank" rel="noopener noreferrer">Explore shooting fundamentals &#8599;</a></div></div>
+      <div class="footnote">Shot outcomes and form measurements are estimates. Review uncertain shots in the video before drawing conclusions.</div>
+    </section>
+    <div id="error" class="error hidden" role="alert"></div>
+  </main>
+  <footer><span>COURTVISION <span>&#10035;</span> &nbsp; YOUR GAME, IN FOCUS.</span><span>BUILT FOR EVERY REP &nbsp; / &nbsp; 01</span></footer>
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>
