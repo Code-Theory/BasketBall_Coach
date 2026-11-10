@@ -92,7 +92,9 @@ def merge_review(result, changes):
                 raise ValueError('Invalid shot time.')
             shot = {'id': None, 'seconds': round(seconds, 2), 'stages': {}, 'apparent_angle': None,
                     'notes': ['This attempt was added during review. Form measurements are not available.']}
+        reviewed = entry.get('reviewed', source is None or entry['outcome'] != shot.get('outcome'))
         shot['outcome'] = entry['outcome']
+        shot['reviewed'] = reviewed is True
         shots.append(shot)
     return sorted(shots, key=lambda item: item['seconds'])
 
@@ -164,7 +166,8 @@ def start(job):
                     hoop[2] - hoop[0] < .01 or hoop[3] - hoop[1] < .005):
                 return jsonify(error='Draw a valid rectangle around the hoop.'), 400
         if not processing.acquire(blocking=False):
-            return jsonify(error='Another video is being analyzed. Please wait for it to finish.'), 409
+            active = next((key for key, value in jobs.items() if value.get('state') == 'running'), None)
+            return jsonify(error='Another video is being analyzed. Returning to its progress.', active_job=active), 409
         item.update(state='running', progress=1, message='Preparing your analysis')
         video = item['video']
 
@@ -234,7 +237,7 @@ def video_file(job):
 def media(job, filename):
     if not (len(job) == 32 and all(c in '0123456789abcdef' for c in job)):
         abort(404)
-    if filename not in {'preview.jpg', 'load.jpg', 'release.jpg', 'follow.jpg', 'trajectory.jpg'} and not re.fullmatch(r'shot_[0-9]+_(load|release|follow)\.jpg', filename):
+    if filename not in {'preview.jpg', 'load.jpg', 'release.jpg', 'follow.jpg', 'trajectory.jpg'} and not re.fullmatch(r'shot_[0-9]+_(load|release|follow)(_original)?\.jpg', filename):
         abort(404)
     return send_from_directory(DATA / job, filename)
 

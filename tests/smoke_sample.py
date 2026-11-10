@@ -27,7 +27,8 @@ with app.test_client() as client:
     assert .54 < box[0] < .58 and .59 < box[2] < .63, box
     assert .34 < box[1] < .39 and .38 < box[3] < .41, box
     assert client.post('/api/analyze/' + job, json={'hoop': box}).status_code == 200
-    deadline = time.monotonic() + 90
+    # Denser frame sampling can take several minutes on CPU-only machines.
+    deadline = time.monotonic() + 300
     while time.monotonic() < deadline:
         result = client.get('/api/jobs/' + job).json
         if result['state'] in ('done', 'error'):
@@ -38,9 +39,11 @@ with app.test_client() as client:
     assert data['processed_frames'] > 0 and data['ball_frames'] > 0, data
     assert data['stages'].get('release'), data
     assert data['attempts'] == len(data['shots']) >= 1, data
-    assert data['uncertain_shots'] >= 1, 'The sample ball disappears near the rim and should be flagged as uncertain.'
+    assert any(s.get('tracking', {}).get('evidence') == 'low' or s['outcome'] == 'uncertain' for s in data['shots']), 'The sample ball disappears near the rim and should be flagged for review.'
     assert client.get('/media/' + job + '/' + data['trajectory']).status_code == 200
     assert client.get('/api/jobs/' + job + '/video').status_code == 200
     for stage in data['stages'].values():
         assert client.get('/media/' + job + '/' + stage['image']).status_code == 200
+        assert stage.get('original_image'), stage
+        assert client.get('/media/' + job + '/' + stage['original_image']).status_code == 200
     print('UPLOAD TO RESULTS PASSED:', data)

@@ -16,18 +16,29 @@ class BridgeTests(unittest.TestCase):
         self.assertEqual(len(bridge.events), 1, bridge.judge.log)
         shots = [{'seconds': bridge.events[0].t_release, 'outcome': 'uncertain'}]
         bridge.match(shots)
-        self.assertEqual(shots[0]['outcome'], 'made' if bridge.events[0].method in ('interpolated', 'rebound') else 'uncertain')
+        self.assertEqual(shots[0]['outcome'], 'made')
         self.assertIn(shots[0]['tracking']['method'], ('interpolated', 'fit', 'extrapolated'))
 
-    def test_extrapolated_event_remains_uncertain(self):
+    def test_extrapolated_event_is_labeled_low_evidence(self):
         from types import SimpleNamespace
         from vendor.shottracker.types import Outcome
         bridge = ShotTrackerBridge(1280, 720)
         bridge.events = [SimpleNamespace(t_release=1, t_cross=2, outcome=Outcome.MADE, method='extrapolated', reason='through_hoop')]
         shots = [{'seconds': 1.0, 'outcome': 'uncertain'}]
         bridge.match(shots)
-        self.assertEqual(shots[0]['outcome'], 'uncertain')
+        self.assertEqual(shots[0]['outcome'], 'made')
         self.assertEqual(shots[0]['tracking']['method'], 'extrapolated')
+        self.assertEqual(shots[0]['tracking']['evidence'], 'low')
+
+    def test_rim_rattle_is_used_when_matched(self):
+        from types import SimpleNamespace
+        from vendor.shottracker.types import Outcome
+        bridge = ShotTrackerBridge(1280, 720)
+        bridge.events = [SimpleNamespace(t_release=1, t_cross=2, outcome=Outcome.MADE, method='rattle', reason='rattled_in')]
+        shots = [{'seconds': 1.0, 'outcome': 'uncertain'}]
+        bridge.match(shots)
+        self.assertEqual(shots[0]['outcome'], 'made')
+        self.assertEqual(shots[0]['tracking']['crossing_seconds'], 2)
 
     def test_unmatched_release_remains_uncertain(self):
         bridge = ShotTrackerBridge(1280, 720)

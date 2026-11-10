@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#111a18">
   <title>CourtVision | Your shooting film room</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/style.css?v=5">
 </head>
 <body>
 <div class="shell">
@@ -14,6 +14,7 @@
     <div class="top-right"><span class="status-dot"></span><span>YOUR FILM ROOM</span><span class="top-divider"></span><span>SHOT ANALYSIS</span></div>
   </header>
   <main>
+    <nav class="journey" aria-label="Analysis steps"><span data-step="upload" class="active"><b>01</b> Upload</span><span data-step="rim"><b>02</b> Mark rim</span><span data-step="analyze"><b>03</b> Analyze</span><span data-step="review"><b>04</b> Review</span></nav>
     <section class="intro" aria-labelledby="intro-title">
       <div class="intro-copy"><div class="eyebrow"><span></span> THE DETAILS MAKE THE DIFFERENCE</div>
         <h1 id="intro-title">Your shot.<br><em>More clearly.</em></h1>
@@ -31,7 +32,7 @@
           <strong>Drop your video here</strong><span>or <u>browse files</u> from your device</span><small>MP4, MOV, M4V, AVI &nbsp; / &nbsp; UP TO 200 MB</small>
           <input id="video-file" type="file" accept=".mp4,.mov,.m4v,.avi" hidden>
         </label>
-        <div class="upload-foot"><span><span class="accent-arrow">&#8627;</span> &nbsp; Keep the player, ball, and hoop in view.</span><span>01 / 03</span></div>
+        <div class="upload-foot"><span><span class="accent-arrow">&#8627;</span> &nbsp; Keep the player, ball, and hoop in view.</span><button class="demo-link" id="open-demo" type="button">Explore an illustrative demo &#8599;</button></div>
       </div>
       <aside class="side-panel"><div class="side-title"><span class="side-icon">&#10035;</span> THE GAME PLAN</div>
         <div class="step"><span>01</span><div><b>Upload your clip</b><p>Choose a clear, well-lit practice video.</p></div></div>
@@ -48,13 +49,13 @@
     </section>
     <section class="loading hidden" id="loading" aria-live="polite"><div class="loading-mark">&#10035;</div><span class="section-index">03 &nbsp;/&nbsp; ANALYSIS IN PROGRESS</span><h2>Looking at the details.</h2><p id="progress-message">Getting your clip ready...</p><div class="progress-track"><div id="progress-bar"></div></div><div class="loading-meta"><span>ANALYZING YOUR SHOTS</span><span id="progress-number">0%</span></div></section>
     <section class="results hidden" id="results" aria-live="polite">
-      <div class="section-heading inner results-heading"><div><span class="section-index">03 &nbsp;/&nbsp; YOUR BREAKDOWN</span><h2>The film room.</h2><p>Every rep is a chance to see something new.</p></div><div class="heading-actions"><span id="save-status" class="save-status" role="status">Review saved</span><button class="button button-dark" id="start-over" type="button">Analyze another <span>&#8599;</span></button></div></div>
-      <div class="stats-grid"><article class="stat"><span>ATTEMPTS <i>01</i></span><strong id="attempts">&mdash;</strong><small>shots in your review</small></article><article class="stat"><span>MADE <i>02</i></span><strong id="made">&mdash;</strong><small>estimated or reviewed</small></article><article class="stat"><span>MISSED <i>03</i></span><strong id="missed">&mdash;</strong><small>estimated or reviewed</small></article><article class="stat highlight"><span>TO REVIEW <i>04</i></span><strong id="uncertain">&mdash;</strong><small>uncertain outcomes</small></article></div>
+      <div class="section-heading inner results-heading"><div><span class="section-index">03 &nbsp;/&nbsp; YOUR BREAKDOWN</span><h2>The film room.</h2><p id="session-label">Every rep is a chance to see something new.</p></div><div class="heading-actions"><span id="save-status" class="save-status" role="status">Review saved</span><button class="button button-quiet" id="download-report" type="button">Download report</button><button class="button button-dark" id="start-over" type="button">Analyze another <span>&#8599;</span></button></div></div>
+      <div class="stats-grid"><article class="stat"><span>ATTEMPTS <i>01</i></span><strong id="attempts">&mdash;</strong><small>shots in your review</small></article><article class="stat"><span>MADE <i>02</i></span><strong id="made">&mdash;</strong><small>estimated or reviewed</small></article><article class="stat"><span>MISSED <i>03</i></span><strong id="missed">&mdash;</strong><small>estimated or reviewed</small></article><article class="stat highlight"><span>TO REVIEW <i>04</i></span><strong id="uncertain">&mdash;</strong><small>uncertain or low evidence</small></article></div>
       <section class="shot-review" aria-label="Shot review"><div class="card-heading"><div><span class="section-index">SHOT TIMELINE</span><h3>Review each attempt.</h3><p class="muted">Select a shot to jump to its moment. Adjust the outcome after watching.</p></div><span class="card-tag">YOUR SESSION</span></div>
-        <div class="review-layout"><div class="video-column"><video id="review-video" controls preload="metadata"></video><div class="review-actions"><button class="button button-quiet" id="add-shot" type="button"><span class="add-icon">+</span> Add shot at current time</button><span id="review-summary" class="muted"></span></div></div>
+        <div class="review-layout"><div class="video-column"><video id="review-video" controls preload="metadata"></video><div class="review-actions"><button class="button button-quiet" id="replay-shot" type="button">Replay selected shot</button><button class="button button-quiet" id="jump-rim" type="button">Jump to rim</button><label class="speed-label">Playback <select id="playback-speed" aria-label="Playback speed"><option value="1">1×</option><option value="0.5">0.5×</option><option value="0.25">0.25×</option></select></label><button class="button button-quiet" id="add-shot" type="button"><span class="add-icon">+</span> Add shot at current time</button><span id="review-summary" class="muted"></span></div><p id="outcome-detail" class="outcome-detail" role="status"></p></div>
         <div class="timeline-column"><div class="timeline-heading"><span>YOUR ATTEMPTS</span><span>SELECT TO VIEW</span></div><div id="shot-list" class="shot-list"></div></div></div>
       </section>
-      <div class="result-grid"><div class="form-section"><div class="card-heading"><div><span class="section-index">FORM STUDY</span><h3>Three moments. One motion.</h3></div><span class="card-tag">SELECTED SHOT</span></div><p class="muted">Estimated positions for the selected attempt. Angles are measured in the image.</p><div class="stage-grid" id="stages"></div><div class="notice" id="result-note"></div></div>
+      <div class="result-grid"><div class="form-section"><div class="card-heading"><div><span class="section-index">FORM STUDY</span><h3>Three moments. One motion.</h3></div><span class="card-tag">SELECTED SHOT</span></div><p class="muted" id="measurement-status">Estimated positions for the selected attempt. Angles are measured in the image.</p><div class="stage-grid" id="stages"></div><div class="notice" id="result-note"></div></div>
       <div class="trajectory-card"><div class="card-heading"><div><span class="section-index">BALL MOVEMENT</span><h3>Follow the flight.</h3></div><span class="card-tag">FULL CLIP</span></div><div class="trajectory-image" id="trajectory"><span>No ball path available</span></div><p class="muted">The path shows detected ball locations; gaps can affect the result.</p><div class="trace-meta"><span>VIDEO LENGTH <b id="video-duration">&mdash;</b></span><span>BALL VISIBLE <b id="ball-frames">&mdash;</b></span></div></div></div>
       <div class="film-notes"><div><span class="section-index">FILM NOTES</span><h3>What the frames show.</h3><p>Observations for the selected shot.</p></div><ul id="film-notes"></ul><div class="coaching-guide"><b>A cue for your next rep</b><p>Start with a comfortable knee bend, then extend your legs and shooting arm through the shot. Every shot and camera angle is different; use these observations as a starting point for review.</p><a href="https://jr.nba.com/basketball-practice-plans/starter/" target="_blank" rel="noopener noreferrer">Explore shooting fundamentals &#8599;</a></div></div>
       <div class="footnote">Shot outcomes and form measurements are estimates. Review uncertain shots in the video before drawing conclusions.</div>
@@ -63,6 +64,6 @@
   </main>
   <footer><span>COURTVISION <span>&#10035;</span> &nbsp; YOUR GAME, IN FOCUS.</span><span>BUILT FOR EVERY REP &nbsp; / &nbsp; 01</span></footer>
 </div>
-<script src="/static/app.js"></script>
+<script src="/static/app.js?v=5"></script>
 </body>
 </html>

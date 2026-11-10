@@ -52,11 +52,13 @@ class ShotTrackerBridge:
                 delta, index = min(candidates)
                 if delta <= 1.5:
                     shot = shots[index]
-                    # An extrapolated arc alone cannot prove a score when the ball disappears.
-                    if event.method in ('interpolated', 'rebound'):
+                    # Keep the judge's trajectory-based calls, but distinguish estimates
+                    # from a directly observed crossing so the UI can flag weak evidence.
+                    if event.method in ('interpolated', 'rebound', 'rattle', 'fit', 'extrapolated'):
                         shot['outcome'] = event.outcome.value
-                    elif 'notes' in shot:
-                        shot['notes'].append('The ball was not clearly visible at the hoop; review the video to confirm the outcome.')
                     shot['tracking'] = {'method': event.method, 'reason': event.reason,
-                                        'crossing_seconds': round(event.t_cross, 2)}
+                                        'crossing_seconds': round(event.t_cross, 2),
+                                        'evidence': 'low' if event.method in ('fit', 'extrapolated') else 'observed'}
+                    if event.method in ('fit', 'extrapolated') and 'notes' in shot:
+                        shot['notes'].append('Low-evidence outcome estimate: the tracker fitted the ball path near the rim. Watch the video to confirm it.')
                     unused.remove(index)

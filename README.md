@@ -1,39 +1,118 @@
 # CourtVision
 
-CourtVision analyzes a basketball practice video locally using pretrained MediaPipe Pose Landmarker Lite and YOLOv8s. No training or API key is needed.
+**CourtVision is a local basketball practice analysis application that turns a shooting session into a reviewable film room.** It combines basketball detection, shot tracking, and pose estimation to help players inspect attempts, review estimated outcomes, and study movement around a shot.
 
-## Start
+The application runs on your computer and does not require an API key, a cloud service, or custom model training. Automatic results are estimates and should be checked against the footage.
 
-On 64-bit Windows, install Python 3.12 and double-click `setup.bat` once to create the application environment and install its dependencies. Then double-click `start.bat` and open http://127.0.0.1:5050. Keep `models/` and `runtime/hoop-python36/` alongside the application. You do not need either neighboring project.
+## Features
 
-Upload a short video. The app searches for the hoop and shows a suggested box; check that it surrounds the **rim opening** and drag a replacement if needed. A stationary camera with one player, the full body, ball and rim visible gives the best chance of detection. You can skip the rim selection, but automatic outcomes will be uncertain. Processing happens on your computer; uploaded files and results remain under `data/` until removed.
+- **Shot tracking:** identifies possible attempts and estimates made, missed, or uncertain outcomes.
+- **Form study:** displays estimated load, release, and follow-through frames with pose landmarks and 2D knee and elbow measurements.
+- **Shot review:** seek to an attempt or rim crossing, adjust playback speed, correct an outcome, remove a false detection, or add a missed attempt.
+- **Evidence indicators:** flags low-evidence trajectory estimates for review and distinguishes automatic results from manually reviewed outcomes.
+- **Session report:** downloads a standalone HTML report containing shot review, selected form frames, and observations. Reviewed shooting percentage uses only manually reviewed outcomes.
+- **Illustrative demo:** explores the interface using simulated footage and example measurements.
+- **Local processing:** analysis and review data stay on the machine running the application.
 
-The results show estimated releases across the clip, made/missed/uncertain outcomes, and form measurements for a selected shot. Play the video to review the results. You can change outcomes, remove false detections, and add attempts at the current video time. These corrections live in the page and are lost when it is closed or reloaded; manually added shots do not have automatic form measurements.
+## System requirements
 
-## Limits
+| Component | Requirement |
+| --- | --- |
+| Operating system | 64-bit Windows. The included automatic hoop-detection runtime is Windows-specific. |
+| Python | Python 3.12, 64-bit, with the Windows `py` launcher. |
+| Browser | A current desktop browser with JavaScript enabled; Chrome or Edge is recommended. |
+| Hardware | CPU execution is supported. Processing time depends on the computer and recording; 8 GB RAM or more is recommended. |
+| Storage | Space for the included models and runtime, Python environment, local uploads, and results. Longer recordings require additional space. |
+| Internet | Required during initial dependency installation; normal analysis runs locally after setup. |
+| GPU | Not required. The default installation uses ONNX Runtime's CPU package. |
 
-- The current detector is a general-purpose sports-ball model, not a basketball-specific model. Small, fast or hidden balls and obstructed players may cause missed or false shots. A displayed count of zero does not prove that there were no shots.
-- Automatic hoop detection uses the included Windows x64 runtime and hoop graph. If either is missing or detection fails, draw the hoop manually. The detector includes the net, so the suggested opening is approximated from the upper part of its box and must be checked. An outcome is estimated only when a detected ball path crosses near the marked rim; ball disappearance and other incomplete paths remain uncertain. A 2D crossing cannot establish depth or guarantee a make. Review and correct the video results.
-- Knee and elbow angles are 2D estimates, affected by camera perspective and landmark visibility. The apparent ball angle is measured in the image and is not necessarily the true 3D release angle. Flags such as a nearly straight knee or flat image trajectory are simple review cues, not proven causes of a miss.
-- Analysis samples roughly 12 frames per second. Closely spaced shots, dribbles, layups, occlusions, multiple players, camera movement, or a ball outside the frame can lead to mistakes. Performance is not validated across diverse real-world clips.
-- Use one analysis at a time. The app processes on CPU by default; processing time depends on the hardware and clip length. For faster but potentially less accurate ball detection, set `COURTVISION_BALL_MODEL=fast` before launching to use the included YOLOv8n model.
+Keep the `models/` and `runtime/hoop-python36/` folders alongside the application. These contain assets used by the analysis pipeline and automatic hoop detection. The application is configured for a local, single-user Windows setup; Linux, macOS, and public hosting have not been verified.
 
-The included models are [Google MediaPipe Pose Landmarker Lite](https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task) and the included ONNX export of Ultralytics YOLOv8s (its embedded metadata identifies an AGPL-3.0 license; the original export source has not been verified). Check the upstream model and dependency licenses before redistribution or commercial use. The older local OpenPose project is not needed to run CourtVision.
+## Getting started
 
-## Verification
+1. Install **64-bit Python 3.12** and ensure the Python launcher is available.
+2. In the CourtVision folder, run `setup.bat`. This creates `.venv` and installs the Python dependencies in `requirements.txt`.
+3. Run `start.bat` and keep its window open while using the application.
+4. Open **http://127.0.0.1:5050** in your browser.
 
-Run `.venv\Scripts\python.exe -m unittest discover -s tests -p test_shot_logic.py` for synthetic event tests. Run `.venv\Scripts\python.exe tests\smoke_sample.py "path\to\sample_video.mp4"` for the upload-to-results test. The smoke test's rim box is calibrated for the sample video from the older AI Basketball Analysis project.
+If setup reports that Python is missing, check the installation with:
 
-The bundled hoop graph was sourced from the AI Basketball Analysis project. The origin and licensing of its trained weights have not been independently verified; review them before redistribution. The neighboring project also includes OpenPose with a noncommercial research license, but OpenPose is not used by CourtVision.
+```powershell
+py -3.12-64 --version
+```
 
-## Moving or deploying
+When moving the project to another computer, create a fresh virtual environment with `setup.bat`; do not rely on a copied `.venv`.
 
-Copy the CourtVision folder, including `models/` and `runtime/`, to a 64-bit Windows machine. Do not rely on a copied `.venv`: Python virtual environments contain machine-specific paths. Install Python 3.12, run `setup.bat` once (internet access is needed to install dependencies), then run `start.bat`. The embedded hoop runtime works independently of other project folders. `data/` contains uploads and generated images; omit it when packaging if those files should not be included.
+## Analyze a practice session
 
-This package has been prepared for 64-bit Windows. Its bundled hoop runtime is Windows-specific; Linux, macOS and public internet hosting are not configured or tested. The Flask server binds to localhost and is intended for a single user, not production hosting. The bundled runtime contains older Python and TensorFlow versions; isolate it appropriately and review dependency and model licenses before distributing the package.
+1. Select a supported recording. The upload limit is **200 MB**; MP4, MOV, M4V, and AVI are accepted.
+2. Check the suggested hoop selection. Draw a box around the **rim opening**, not the entire net, if the suggestion needs adjustment. If automatic hoop detection is unavailable, select the rim manually.
+3. Start the analysis and wait for processing to finish.
+4. Select an attempt in the shot timeline. Replay it, review the rim crossing when available, and correct or confirm the outcome.
+5. Inspect the form frames and download the session report if needed.
 
-## Basketball Shot Tracker integration
+For best results, use a steady camera with one player, the ball, and the hoop in view. Keep the full body visible and use adequate lighting. A closer, unobstructed view of the rim improves the chance of following the ball through the basket. Several players or balls, fast camera movement, occlusion, or an out-of-frame ball can produce incorrect or missing detections.
 
-CourtVision bundles the source of [Basketball Shot Tracker](https://github.com/NathanielRecto/Basketball-Shot-Tracker) under `vendor/shottracker/` (snapshot `88ac29684a5843f4eccc4e067f23c5c5da69e38b`), together with its AGPL-3.0 license and third-party notices. CourtVision adapts detections from its existing general-purpose YOLO model to the vendored ball tracker and shot judge, and matches judged events to detected releases. The upstream repository does not distribute its basketball-specific detector weights, so its published accuracy figures do not apply to this integration. Unmatched releases and extrapolated-only outcomes remain uncertain and can be reviewed in the video. The tracker runs on the existing sampled frames; in the four-shot practice clip, ball detections remain too sparse around the rim for reliable automatic outcomes. No training is required.
+## How it works
 
-The bundled tracker code is AGPL-3.0-or-later. The hoop detector weights' origin and redistribution terms remain unverified; review all model and dependency licenses before distributing CourtVision or deploying it as a network service.
+1. **Detection:** a basketball-specific YOLO model identifies ball candidates in sampled frames. MediaPipe Pose Landmarker estimates body landmarks.
+2. **Tracking:** CourtVision passes ball detections and the selected rim position to its integration of Basketball Shot Tracker.
+3. **Shot analysis:** the application matches tracker events to possible releases and collects estimated load, release, and follow-through measurements.
+4. **Review:** results are shown alongside the recording. You can correct outcomes and save a report.
+
+The default ball detector is the included Swish-Vision ONNX model. CourtVision falls back to YOLOv8s if that model is missing. For an explicit model selection, set `COURTVISION_BALL_MODEL` to `swish`, `standard`, or `fast` before starting the application.
+
+## Understanding the results
+
+Shot counts and outcomes can be incorrect. A ball passing behind or in front of the rim can appear to cross it in a 2D image, and the ball may be hidden by the net or backboard. The tracker may use a fitted or extrapolated path; those results are labeled **low-evidence** and included in the review count. An uncertain result means the app could not make a supported call.
+
+Knee and elbow values are **2D image measurements**, not validated biomechanical assessments. Perspective, landmark visibility, and estimated phase timing affect them. Coaching cues are prompts for further review; they do not establish why a shot was missed. Manually added attempts do not have automatic form measurements.
+
+One locally held, manually labeled four-shot practice recording was tested with the current tracker integration and a manually selected first-frame rim. All four attempts and outcomes matched the labels; three outcome calls used low-evidence extrapolation. This small test does not establish performance on other recordings.
+
+## Data and privacy
+
+Uploads, generated analysis images, results, and review corrections are stored under `data/`. They remain on the local machine until removed. The most recent completed review is restored in the same browser when available; the illustrative demo is temporary. `data/`, local virtual environments, logs, and common recording formats are excluded by `.gitignore`.
+
+## Running checks
+
+Run the automated unit and integration tests from the project folder:
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py"
+```
+
+The end-to-end smoke test accepts a local sample file:
+
+```powershell
+.\.venv\Scripts\python.exe tests\smoke_sample.py "C:\path\to\sample.mp4"
+```
+
+The smoke test's automatic hoop-selection assertions are calibrated for the original project sample and may not pass for an unrelated recording.
+
+## Project structure
+
+```text
+CourtVision/
+├── app.py                 # Flask routes, job state, and review persistence
+├── analysis.py            # Video analysis, pose metrics, and ball detection
+├── shot_logic.py          # Release recognition and shot observations
+├── tracker_bridge.py      # Adapter for the bundled shot tracker
+├── hoop_tracker.py        # Rim-position tracking
+├── hoop_worker.py         # Automatic hoop-detection worker
+├── models/                # Detection and pose model assets
+├── runtime/               # Windows hoop-detection runtime
+├── vendor/shottracker/    # Bundled tracker source and notices
+├── templates/             # Application markup
+├── static/                # Interface styles and client-side behavior
+├── tests/                 # Unit, integration, and smoke tests
+├── requirements.txt       # Python dependencies
+├── setup.bat              # Windows setup
+└── start.bat              # Local application launcher
+```
+
+## Credits and licensing
+
+CourtVision uses [MediaPipe Pose Landmarker](https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker), a basketball detector derived from [Swish-Vision](https://github.com/ahmedsilat44/Swish-Vision), ONNX Runtime, OpenCV, and Flask. Shot tracking and judging incorporate [Basketball Shot Tracker](https://github.com/NathanielRecto/Basketball-Shot-Tracker), snapshot `88ac29684a5843f4eccc4e067f23c5c5da69e38b`. Its AGPL-3.0-or-later license and third-party notices are included in `vendor/shottracker/`.
+
+Review the licenses and redistribution terms of all dependencies and model weights before distributing the application or offering it as a network service. The origins or separate redistribution terms of some included weights, including the hoop detector and Swish-Vision-derived weights, have not been independently verified.
